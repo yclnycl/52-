@@ -95,14 +95,15 @@ public class Index {
     }
 
     public static String getVidByCid(String cid) throws JsonProcessingException {
-        String url = "https://www.52investing.com/52crm/app/index.php?method52=b.livepro.watchvod";
+        String url = "https://www.52investing.com/52crm/app/index.php?method52=b.vodnew.wacthvod";
         Map map = new HashMap();
-        map.put("url", "/52crm/app/index.php?method52=b.livepro.getblwtoken");
+        map.put("url", "/52crm/app/index.php?method52=b.vodnew.wacthvod");
         map.put("id", cid);
 
-        String result = HttpRequest.post(url).form(map).timeout(5000).execute().body();
+        String result = HttpRequest.post(url).form(map).header("cookie", "usertokenid=2dt8d97g92f3mkbljrmncrc9e2; PHPSESSID=2dt8d97g92f3mkbljrmncrc9e2; Hm_lvt_69928069bf0a2e6303a438c8a2c952be=1582016432,1582346503,1582347771; Hm_lvt_ae2dc849b772f563c6f647ccfeef5cf0=1582016432,1582346503,1582347771; Hm_lvt_b80c8367de326c9ac19849da40901c18=1582016432,1582346503,1582347771; href=https%3A%2F%2Fwww.52investing.com%2Flive%2FpayRoom_32.html; accessId=4800cc90-d468-11e9-9993-05e8e3043cfb; lockkey=da731393d3eaaf15ef4faa5a7106b440; phone=13848240220; usertokenid=2dt8d97g92f3mkbljrmncrc9e2; mid=243479; qimo_seosource_4800cc90-d468-11e9-9993-05e8e3043cfb=%E7%AB%99%E5%86%85; qimo_seokeywords_4800cc90-d468-11e9-9993-05e8e3043cfb=; Hm_lpvt_69928069bf0a2e6303a438c8a2c952be=1582361669; Hm_lpvt_ae2dc849b772f563c6f647ccfeef5cf0=1582361669; Hm_lpvt_b80c8367de326c9ac19849da40901c18=1582361669; pageViewNum=55").timeout(5000).execute().body();
         Map<String, Map<String, Object>> resultMap = objectMapper.readValue(result, Map.class);
 
+        StaticLog.debug(result);
         return resultMap.get("data").get("plvid").toString();
     }
 
@@ -142,6 +143,7 @@ public class Index {
                     System.out.println("线程" + string + ":--------------------->结束工作");
                 } catch (InterruptedException | IOException e) {
                     e.printStackTrace();
+                    end.countDown();
                 }
 
             }
@@ -156,7 +158,7 @@ public class Index {
             public void run() {
                 try {
                     StaticLog.info("创建定时线程");
-                    Thread.sleep(480000);
+                    Thread.sleep(900000);
 
                     String cmd = "taskkill /F /im ffmpeg.exe";
                     RuntimeUtil.execForStr(cmd);
